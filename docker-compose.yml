@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  log-portal:
+    build: .
+    container_name: docker_log_portal
+    ports:
+      - "7005:80"
+    volumes:
+      # Mount the host directory where all your applications/containers are stored
+      # Change '/app' to your local test folder if testing in Windows (e.g. './test_app_dir:/app:ro')
+      - /app:/app:ro
+
+      # Mount host Docker socket to interact with host container logs
+      - /var/run/docker.sock:/var/run/docker.sock
+
+      # Mount config file to allow editing configuration from the host
+      - /app/portal_log_uat/config.php:/var/www/html/config.php:ro
+
+      # Mount otp.log to easily view authentication codes from the host
+      - /app/portal_log_uat/otp.log:/var/www/html/otp.log:z
+
+      # Mount users.json to persist whitelisted users between container rebuilds
+      - /app/portal_log_uat/users.json:/var/www/html/users.json:z
+
+      # Mount audit.log to persist user audit logs on the host
+      - /app/portal_log_uat/audit.log:/var/www/html/audit.log:z
+
+    depends_on:
+      - db
+    restart: unless-stopped
+
+  db:
+    image: mariadb:10.6
+    container_name: portal_log_db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: portal_log
+      MYSQL_USER: portal_log
+      MYSQL_PASSWORD: sua_senha_segura_do_banco
+      MYSQL_ROOT_PASSWORD: sua_senha_root_do_banco
+    volumes:
+      - /app/portal_log_uat/mariadb_data:/var/lib/mysql:z

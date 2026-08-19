@@ -1,0 +1,23 @@
+# Logs
+otp.log
+audit.log
+*.log
+
+# Banco de dados persistente local do Docker
+mariadb_data/
+
+# Arquivos de whitelist local
+users.json
+
+# IDEs e editores de texto
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+
+# Arquivos do sistema operacional
+.DS_Store
+Thumbs.db
